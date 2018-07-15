@@ -41,7 +41,7 @@ class Ext::Api::V1::ProductsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ext_api_v1_product
-      @ext_api_v1_product = Ext::Api::V1::Product.find(params[:id])
+      @ext_api_v1_product = Ext::Api::V1::Product.find_by({pid: params[:id]})
     end
 
     # Only allow a trusted parameter "white list" through.
