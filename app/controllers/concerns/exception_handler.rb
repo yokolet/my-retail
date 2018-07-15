@@ -5,5 +5,9 @@ module ExceptionHandler
     rescue_from Mongoid::Errors::DocumentNotFound do |e|
       render json: { message: e.message }, status: :not_found
     end
+
+    rescue_from RestClient::NotFound do |e|
+      render json: { message: e.message }, status: :not_found
+    end
   end
 end
