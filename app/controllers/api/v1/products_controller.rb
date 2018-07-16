@@ -9,8 +9,7 @@ class Api::V1::ProductsController < ApplicationController
 
   # GET /products/1
   def show
-    response = set_api_v1_product
-    render json: response.body, status: response.code
+    render json: @product_info, status: @response_code
   end
 
   # PATCH/PUT /products/1
@@ -29,9 +28,20 @@ class Api::V1::ProductsController < ApplicationController
       RestClient.get(API_ENDPOINT, {accept: :json})
     end
 
+    def format_product(product, current_price)
+      {id: product["pid"],
+       name: product["name"],
+       current_price: {value: current_price["value"],
+                       currency_code: current_price["currency_code"]}}
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_api_v1_product
-      RestClient.get(API_ENDPOINT + "/" + params[:id])
+      response = RestClient.get(API_ENDPOINT + "/" + params[:id])
+      product = JSON.parse(response.body)
+      current_price = Api::V1::CurrentPrice.find_by({pid: product["pid"]})
+      @product_info = format_product(product, current_price)
+      @response_code = response.code
     end
 
     # Only allow a trusted parameter "white list" through.

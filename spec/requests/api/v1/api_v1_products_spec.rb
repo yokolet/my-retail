@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Products", type: :request do
   # The API makes HTTP requests to get product info
   # 10 products were already seeded
+  before { create_current_prices }
   let(:product_pid) { 53160687 }
 
   describe "GET /api_v1_products" do
@@ -28,7 +29,12 @@ RSpec.describe "Api::V1::Products", type: :request do
 
       it 'returns the product' do
         expect(json).not_to be_empty
-        expect(json['pid']).to eq(product_pid)
+        expect(json['id']).to eq(product_pid)
+      end
+
+      it 'returns the current price of the product' do
+        expect(json).not_to be_empty
+        expect(json['current_price']).not_to be_empty
       end
     end
 
