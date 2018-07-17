@@ -14,10 +14,10 @@ class Api::V1::ProductsController < ApplicationController
 
   # PATCH/PUT /products/1
   def update
-    if @product.update(product_params)
-      render json: @product
+    if @current_price.update(api_v1_current_price_params)
+      head :no_content
     else
-      render json: @product.errors, status: :unprocessable_entity
+      head :unprocessable_entity
     end
   end
 
@@ -47,13 +47,13 @@ class Api::V1::ProductsController < ApplicationController
     def set_api_v1_product
       response = RestClient.get(API_ENDPOINT + "/" + params[:id])
       product = JSON.parse(response.body)
-      current_price = Api::V1::CurrentPrice.find_by({pid: product["pid"]})
-      @product_info = format_product(product, current_price)
+      @current_price = Api::V1::CurrentPrice.find_by({pid: product["pid"]})
+      @product_info = format_product(product, @current_price)
       @response_code = response.code
     end
 
     # Only allow a trusted parameter "white list" through.
-    def api_v1_product_params
-      params.require(:api_v1_product).permit(:pid, :name)
+    def api_v1_current_price_params
+      params.permit(:value, :currency_code)
     end
 end
